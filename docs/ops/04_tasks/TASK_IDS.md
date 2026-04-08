@@ -26,6 +26,7 @@ Convention: `XXX-NNN` avec prefixe domaine et numero (ex. `CAT-001`).
 | CAT-001 | Modeles + migrations Category/Product + seed minimal | Backend | planned |
 | CAT-002 | Listing categorie + filtres (Inertia props alignes contrat) | Backend | planned |
 | CAT-003 | Page detail produit (Inertia props alignes contrat) | Backend | planned |
+| CART-001 | Fondation panier backend (DB + endpoints + tests) | Backend | done |
 | CAT-010 | Pages Inertia: home, listing, detail, layout header/footer filtres | Frontend | planned |
 | CAT-020 | Tests feature + parcours critique (auth deja existant) | QA | planned |
 | OPS-010 | CI applicative (PHPUnit + build front) | Setup/DevOps | in_progress |
