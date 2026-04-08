@@ -1,17 +1,17 @@
 # Default reviewers
-* @team-lead
+* @jeremy-nowak-pro
 
 # Backend ownership
-/app/ @backend-lead
-/routes/ @backend-lead
-/database/ @backend-lead
+/app/ @jeremy-nowak-pro
+/routes/ @jeremy-nowak-pro
+/database/ @jeremy-nowak-pro
 
 # Frontend ownership
-/resources/js/ @frontend-lead
+/resources/js/ @jeremy-nowak-pro
 
 # Project governance docs
-/docs/ops/01_context/ @team-lead
-/docs/ops/03_specs/ @team-lead
-/docs/ops/04_tasks/ @team-lead
-/docs/ops/05_agents/ @team-lead
-/docs/ops/06_reviews/ @team-lead
+/docs/ops/01_context/ @jeremy-nowak-pro
+/docs/ops/03_specs/ @jeremy-nowak-pro
+/docs/ops/04_tasks/ @jeremy-nowak-pro
+/docs/ops/05_agents/ @jeremy-nowak-pro
+/docs/ops/06_reviews/ @jeremy-nowak-pro
