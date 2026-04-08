@@ -48,6 +48,8 @@ jobs:
         run: |
           test -f docs/ops/05_agents/ORCHESTRATOR.md
           test -f docs/ops/05_agents/HANDOFF_PROTOCOL.md
+          test -f docs/ops/05_agents/PARALLEL_AGENTS_WORKFLOW.md
+          test -f docs/ops/04_tasks/TASK_IDS.md
           test -f docs/ops/06_reviews/BLOCKERS.md
 
   build:

@@ -23,3 +23,9 @@ Construire les services et endpoints Laravel pour catalogue, filtres, detail pro
 - Endpoints stables et testes (feature tests prioritaires)
 - Validation d'entree robuste (FormRequest)
 - Reponses coherentes (Resources/DTO)
+
+## Travail en parallele avec le Frontend
+- Lire `docs/ops/05_agents/PARALLEL_AGENTS_WORKFLOW.md` et le `Task ID` assigne.
+- Ne pas modifier `resources/js/**` sauf accord explicite (conflit de PR).
+- Exposer les donnees via Inertia conformement a `docs/ops/03_specs/API_CONTRACTS.md` (props pages).
+- Si le Front est bloque: documenter dans `docs/ops/06_reviews/BLOCKERS.md` avec le shape des props attendu.

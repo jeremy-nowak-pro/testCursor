@@ -1,5 +1,9 @@
 # API Contracts
 
+## Implementation note (Laravel + Inertia)
+
+Les chemins ci-dessous decrivent le **contrat fonctionnel** (URL + donnees). En implementation Inertia, le Backend renvoie des **props** depuis les controllers vers les pages React; les memes chemins `GET` s'appliquent sauf si tu exposes des alias documentes.
+
 ## Conventions
 - Currency: EUR
 - Response format:

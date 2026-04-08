@@ -4,9 +4,11 @@
 - Branch principale: `main` (release, protegee)
 - Branch relais: `develop` (integration, protegee)
 - Branches de travail:
-  - `feat/<task-id>-<short-name>`
-  - `fix/<task-id>-<short-name>`
-  - `chore/<task-id>-<short-name>`
+  - `feat/<TASK-ID>-<short-name>` (ex. `feat/CAT-002-category-listing-api`)
+  - `fix/<TASK-ID>-<short-name>`
+  - `chore/<TASK-ID>-<short-name>`
+- Task IDs enregistres: `docs/ops/04_tasks/TASK_IDS.md`
+- Travail multi-agents: `docs/ops/05_agents/PARALLEL_AGENTS_WORKFLOW.md`
 
 ## Regles de contribution
 - Aucun push direct sur `main` ni `develop`
