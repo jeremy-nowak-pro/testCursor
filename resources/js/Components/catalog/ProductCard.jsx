@@ -1,3 +1,5 @@
+import AddToCartButton from '../cart/AddToCartButton';
+
 export default function ProductCard({ product }) {
     if (!product) return null;
 
@@ -30,6 +32,8 @@ export default function ProductCard({ product }) {
                     <span className="rounded bg-slate-100 px-2 py-1">{product.type}</span>
                     <span className="rounded bg-slate-100 px-2 py-1">{product.format}</span>
                 </div>
+
+                <AddToCartButton productId={product.id} className="w-full" />
             </div>
         </article>
     );
