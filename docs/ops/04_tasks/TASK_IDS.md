@@ -28,6 +28,7 @@ Convention: `XXX-NNN` avec prefixe domaine et numero (ex. `CAT-001`).
 | CAT-003 | Page detail produit (Inertia props alignes contrat) | Backend | planned |
 | CAT-010 | Pages Inertia: home, listing, detail, layout header/footer filtres | Frontend | planned |
 | CAT-020 | Tests feature + parcours critique (auth deja existant) | QA | planned |
+| OPS-010 | CI applicative (PHPUnit + build front) | Setup/DevOps | in_progress |
 
 Mettre a jour la colonne **Statut** au fil des merges: `planned` -> `in_progress` -> `done`.
 
