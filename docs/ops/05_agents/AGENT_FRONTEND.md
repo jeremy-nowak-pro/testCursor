@@ -24,3 +24,9 @@ Implementer l'interface Inertia React du MVP e-commerce avec navigation, filtres
 - Parcours utilisateur principaux fonctionnels
 - UI coherente et responsive sur cas principaux
 - Gestion des etats loading/erreur sur appels critiques
+
+## Travail en parallele avec le Backend
+- Lire `docs/ops/05_agents/PARALLEL_AGENTS_WORKFLOW.md` et le `Task ID` assigne.
+- Ne pas modifier `app/Http/Controllers/**`, `routes/**`, `database/migrations/**` sauf accord (zone Backend).
+- S'appuyer sur les props / routes documentes dans `API_CONTRACTS.md` et les pages Inertia existantes.
+- Si les props ou routes manquent: ouvrir un blocage dans `docs/ops/06_reviews/BLOCKERS.md` et attendre la PR Backend ou un contrat fige.
