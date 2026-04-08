@@ -15,6 +15,13 @@ export default function ShopLayout({ title, children }) {
                     <NavCategories categories={categories} />
 
                     <div className="flex items-center gap-2 text-sm">
+                        <Link
+                            href={route('cart.index')}
+                            className="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-100"
+                        >
+                            Panier
+                        </Link>
+
                         {auth?.user ? (
                             <Link
                                 href={route('dashboard')}

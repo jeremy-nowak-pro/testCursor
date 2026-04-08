@@ -1,9 +1,12 @@
 import { Head } from '@inertiajs/react';
+import { useState } from 'react';
 import ShopLayout from '../../Components/ShopLayout';
+import AddToCartButton from '../../Components/cart/AddToCartButton';
 
 export default function ProductShow({ data }) {
     const product = data;
     const mainImage = product?.images?.[0];
+    const [quantity, setQuantity] = useState(1);
 
     return (
         <>
@@ -54,6 +57,30 @@ export default function ProductShow({ data }) {
                             >
                                 {product.in_stock ? 'En stock' : 'Rupture de stock'}
                             </p>
+
+                            <div className="flex flex-wrap items-end gap-3 pt-2">
+                                <div className="flex flex-col gap-1">
+                                    <label htmlFor="product-qty" className="text-xs text-slate-600">
+                                        Quantite
+                                    </label>
+                                    <input
+                                        id="product-qty"
+                                        type="number"
+                                        min={1}
+                                        value={quantity}
+                                        onChange={(event) =>
+                                            setQuantity(Math.max(1, Number(event.target.value || 1)))
+                                        }
+                                        className="w-24 rounded border border-slate-300 px-2 py-1.5 text-sm"
+                                    />
+                                </div>
+
+                                <AddToCartButton
+                                    productId={product.id}
+                                    quantity={quantity}
+                                    disabled={!product.in_stock}
+                                />
+                            </div>
                         </div>
                     </div>
                 )}
