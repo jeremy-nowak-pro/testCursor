@@ -1,5 +1,6 @@
 ## Summary
-- Task ID:
+- Task ID: (ex. CAT-002 — voir `docs/ops/04_tasks/TASK_IDS.md`)
+- Agent / area: backend | frontend | qa | docs | ops
 - What changed:
 - Why:
 
@@ -21,6 +22,7 @@
 - Steps to rollback if needed:
 
 ## Checklist
-- [ ] Linked to backlog item
-- [ ] Docs/spec updated if needed
+- [ ] Linked to backlog item (`docs/ops/04_tasks/BACKLOG.md`)
+- [ ] Docs/spec updated if needed (`API_CONTRACTS.md` si routes ou props changent)
+- [ ] Handoff note (si multi-agents): `docs/ops/05_agents/HANDOFF_PROTOCOL.md`
 - [ ] Ready for review

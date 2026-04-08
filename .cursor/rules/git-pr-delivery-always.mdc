@@ -1,0 +1,31 @@
+---
+description: Enforce end-to-end git delivery flow for feature tasks
+alwaysApply: true
+---
+
+# Mandatory Git Delivery Flow
+
+When the user asks to execute a feature/task, do not stop at code changes.
+
+## Completion Criteria (required order)
+1. Create or checkout the requested branch.
+2. Implement requested changes in allowed scope.
+3. Run required validations (lint/tests/build) and report results.
+4. Stage relevant files and create a commit.
+5. Push branch to `origin`.
+6. Open a PR to `develop` and return the PR URL.
+7. Provide final handoff summary.
+
+## Hard Stop Rules
+- Never mark a task as `done` without branch + commit + push.
+- Never mark a task as `done` without a PR URL, unless tooling is unavailable.
+- If PR creation is impossible (for example `gh` missing or auth blocked):
+  - still complete branch + commit + push,
+  - clearly report the blocker,
+  - provide exact next command(s) or web URL to open the PR manually.
+
+## Safety and Scope
+- Respect task scope and file ownership constraints from task docs.
+- Do not push to protected branches directly (`main`, `develop`).
+- If required inputs are missing (base branch, remote, permissions), ask once, then continue automatically.
+
