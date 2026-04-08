@@ -1,18 +1,35 @@
 <?php
 
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
+use App\Models\Category;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 
 Route::get('/', function () {
+    $categories = [];
+
+    if (Schema::hasTable('categories')) {
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get(['name', 'slug'])
+            ->map(fn (Category $category) => [
+                'name' => $category->name,
+                'slug' => $category->slug,
+            ])
+            ->values();
+    }
+
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
+        'categories' => $categories,
     ]);
 });
+
+Route::get('/categories/{slug}/products', [CatalogController::class, 'categoryListing'])
+    ->name('catalog.category.listing');
+Route::get('/products/{slug}', [CatalogController::class, 'productShow'])
+    ->name('catalog.product.show');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
