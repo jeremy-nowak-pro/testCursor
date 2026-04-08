@@ -3,6 +3,13 @@ import NavCategories from './NavCategories';
 
 export default function ShopLayout({ title, children }) {
     const { auth, categories } = usePage().props;
+    const cartHref = (() => {
+        try {
+            return route('cart.index');
+        } catch {
+            return '/cart';
+        }
+    })();
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -16,7 +23,7 @@ export default function ShopLayout({ title, children }) {
 
                     <div className="flex items-center gap-2 text-sm">
                         <Link
-                            href={route('cart.index')}
+                            href={cartHref}
                             className="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-100"
                         >
                             Panier
