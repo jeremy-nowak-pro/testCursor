@@ -1,17 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-
-const fallbackCategories = [
-    { name: 'Affiches', slug: 'affiches' },
-    { name: 'Stickers', slug: 'stickers' },
-    { name: 'Textiles', slug: 'textiles' },
-];
+import NavCategories from './NavCategories';
 
 export default function ShopLayout({ title, children }) {
     const { auth, categories } = usePage().props;
-    const navCategories =
-        Array.isArray(categories) && categories.length > 0
-            ? categories
-            : fallbackCategories;
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -21,17 +12,7 @@ export default function ShopLayout({ title, children }) {
                         Catalog MVP
                     </Link>
 
-                    <nav className="flex flex-wrap items-center gap-3 text-sm">
-                        {navCategories.map((category) => (
-                            <a
-                                key={category.slug}
-                                href={`/categories/${category.slug}/products`}
-                                className="rounded px-2 py-1 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900"
-                            >
-                                {category.name}
-                            </a>
-                        ))}
-                    </nav>
+                    <NavCategories categories={categories} />
 
                     <div className="flex items-center gap-2 text-sm">
                         {auth?.user ? (

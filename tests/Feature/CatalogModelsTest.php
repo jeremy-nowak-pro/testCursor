@@ -42,14 +42,15 @@ class CatalogModelsTest extends TestCase
     {
         $this->seed(CatalogSeeder::class);
 
-        $this->assertDatabaseHas('categories', ['slug' => 'books']);
-        $this->assertDatabaseHas('categories', ['slug' => 'electronics']);
-        $this->assertDatabaseHas('products', ['slug' => 'sample-paperback-a']);
-        $this->assertDatabaseHas('products', ['slug' => 'sample-ebook-b']);
-        $this->assertDatabaseHas('products', ['slug' => 'sample-gadget-c']);
+        $this->assertDatabaseHas('categories', ['slug' => 'tshirt']);
+        $this->assertDatabaseHas('categories', ['slug' => 'pantalon']);
+        $this->assertDatabaseHas('categories', ['slug' => 'veste']);
+        $this->assertDatabaseHas('products', ['slug' => 'tshirt-basic-noir']);
+        $this->assertDatabaseHas('products', ['slug' => 'pantalon-chino-beige']);
+        $this->assertDatabaseHas('products', ['slug' => 'veste-denim-bleu']);
 
-        $book = Category::query()->where('slug', 'books')->firstOrFail();
-        $this->assertGreaterThanOrEqual(2, $book->products()->count());
+        $tshirts = Category::query()->where('slug', 'tshirt')->firstOrFail();
+        $this->assertGreaterThanOrEqual(2, $tshirts->products()->count());
     }
 
     public function test_category_validation_rules_pass_for_valid_data(): void

@@ -31,5 +31,5 @@ Centralise tous les blocages inter-agents.
 - `Dependency`: Livraison backend CAT-002 et CAT-003 (routes + props conformes `API_CONTRACTS.md`).
 - `Owner`: Agent Backend (CAT-002/CAT-003)
 - `ETA`: 2026-04-09
-- `Status`: open
-- `Resolution`: En attente des routes et props backend; UI preparee cote frontend sur pages `Catalog/CategoryListing` et `Catalog/ProductShow`.
+- `Status`: resolved
+- `Resolution`: Routes backend catalogue implementees (`/categories/{slug}/products`, `/products/{slug}`), mapping props Inertia aligne `API_CONTRACTS.md`, seed catalogue aligne (slugs `tshirt`, `pantalon`, `veste`) et tests feature associes passes.
