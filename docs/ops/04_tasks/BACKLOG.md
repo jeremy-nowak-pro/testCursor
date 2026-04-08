@@ -20,7 +20,7 @@ Priorite: haut vers bas. Chaque item lie a un **Task ID** (voir `TASK_IDS.md`).
 ## Suite MVP
 
 - [ ] Pages legales (mentions, confidentialite, cookies)
-- [ ] Base panier (session ou DB)
+- [x] **CART-001** — Fondation panier backend (DB + endpoints + tests)
 - [ ] Preparation integration Stripe (structure checkout, hors prod live)
 - [ ] Livraison: regles MVP (forfait / retrait)
 

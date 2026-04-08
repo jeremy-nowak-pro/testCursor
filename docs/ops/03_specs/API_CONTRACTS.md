@@ -68,6 +68,36 @@ Les chemins ci-dessous decrivent le **contrat fonctionnel** (URL + donnees). En 
   - `404` product not found
   - `422` invalid quantity
 
+## Cart - Show
+- Method: `GET`
+- Path: `/cart`
+- Auth: required
+- Response (200):
+  - `data.id`
+  - `data.items[]`: `id`, `product_id`, `product{name,slug}`, `unit_price`, `currency`, `quantity`, `line_total`
+  - `data.subtotal`, `data.currency`
+
+## Cart - Update Item
+- Method: `PATCH`
+- Path: `/cart/items/{item}`
+- Auth: required
+- Request:
+  - `quantity` (int, min 1)
+- Response:
+  - `302` redirect on success (web flow) or `200` payload (JSON flow)
+- Errors:
+  - `403` item ownership mismatch
+  - `422` invalid quantity
+
+## Cart - Delete Item
+- Method: `DELETE`
+- Path: `/cart/items/{item}`
+- Auth: required
+- Response:
+  - `302` redirect on success (web flow) or `200` payload (JSON flow)
+- Errors:
+  - `403` item ownership mismatch
+
 ## Versioning
 - MVP strategy: web routes with stable contracts documented here
 - Evolution path: introduce `/api/v1` when mobile/integrations require strict API versioning
