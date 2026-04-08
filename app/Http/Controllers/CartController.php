@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
+
 use App\Models\CartItem;
 use App\Models\Product;
+use App\Services\CartService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -12,12 +13,19 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class CartController extends Controller
 {
+n response()->json(['data' => $this->cartPayload($cart)]);
+    public function __construct(private readonly CartService $cartService) {}
+
     public function show(Request $request): JsonResponse
     {
-        $cart = $this->activeCart((int) $request->user()->id);
+        $cart = $this->cartService->findCurrentCart($request->user(), $request->session()->getId());
+        if (! $cart) {
+            return response()->json(['data' => ['items' => [], 'subtotal' => 0, 'currency' => 'EUR']]);
+        }
+
         $cart->load('items.product');
 
-        return response()->json(['data' => $this->cartPayload($cart)]);
+        return response()->json(['data' => $this->cartPayload($cart->items->all())]);
     }
 
     public function addItem(Request $request): JsonResponse
@@ -32,28 +40,25 @@ class CartController extends Controller
         }
 
         $validated = $validator->validated();
-        $product = Product::query()->findOrFail((int) $validated['product_id']);
-        $cart = $this->activeCart((int) $request->user()->id);
 
-        $item = CartItem::query()->firstOrNew([
-            'cart_id' => $cart->id,
-            'product_id' => $product->id,
-        ]);
+        $product = Product::query()->find($validated['product_id']);
+        if (! $product) {
+            return response()->json([
+                'error' => ['code' => 'PRODUCT_NOT_FOUND', 'message' => 'Product not found.'],
+            ], HttpResponse::HTTP_NOT_FOUND);
+        }
 
-        $item->quantity = ($item->quantity ?? 0) + (int) $validated['quantity'];
-        $item->unit_price = $item->exists ? $item->unit_price : $product->price;
-        $item->currency = $item->exists ? $item->currency : $product->currency;
-        $item->save();
+        $cart = $this->cartService->resolveCurrentCart($request->user(), $request->session()->getId());
+        if (! $request->user()) {
+            $request->session()->put('guest_cart_id', $cart->id);
+        }
+        $cart = $this->cartService->addItem($cart, $product, (int) $validated['quantity']);
 
-        $cart->refresh()->load('items.product');
-
-        return response()->json(['data' => $this->cartPayload($cart)]);
+        return response()->json(['data' => $this->cartPayload($cart->items->all())]);
     }
 
     public function updateItem(Request $request, CartItem $item): JsonResponse
     {
-        $this->assertOwnership($request, $item);
-
         $validator = Validator::make($request->all(), [
             'quantity' => ['required', 'integer', 'min:1'],
         ]);
@@ -62,43 +67,37 @@ class CartController extends Controller
             return response()->json(['errors' => $validator->errors()->toArray()], 422);
         }
 
-        $item->update(['quantity' => (int) $validator->validated()['quantity']]);
-        $cart = $item->cart()->with('items.product')->firstOrFail();
+        $validated = $validator->validated();
 
-        return response()->json(['data' => $this->cartPayload($cart)]);
+        if (! $this->ownsItem($request, $item)) {
+            abort(HttpResponse::HTTP_NOT_FOUND);
+        }
+
+        $this->cartService->updateItemQuantity($item, (int) $validated['quantity']);
+        $item->load('cart.items.product');
+
+        return response()->json(['data' => $this->cartPayload($item->cart->items->all())]);
     }
 
     public function destroyItem(Request $request, CartItem $item): JsonResponse
     {
-        $this->assertOwnership($request, $item);
-
-        $cart = $item->cart()->firstOrFail();
-        $item->delete();
-        $cart->refresh()->load('items.product');
-
-        return response()->json(['data' => $this->cartPayload($cart)]);
-    }
-
-    private function activeCart(int $userId): Cart
-    {
-        return Cart::query()->firstOrCreate(['user_id' => $userId]);
-    }
-
-    private function assertOwnership(Request $request, CartItem $item): void
-    {
-        $item->loadMissing('cart');
-
-        if ((int) $item->cart->user_id !== (int) $request->user()->id) {
-            abort(HttpResponse::HTTP_FORBIDDEN);
+        if (! $this->ownsItem($request, $item)) {
+            abort(HttpResponse::HTTP_NOT_FOUND);
         }
+
+        $cart = $item->cart()->with('items.product')->first();
+        $this->cartService->removeItem($item);
+        $cart?->refresh()->load('items.product');
+
+        return response()->json(['data' => $this->cartPayload($cart?->items?->all() ?? [])]);
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function cartPayload(Cart $cart): array
+    private function cartPayload(array $items): array
     {
-        $items = $cart->items->map(function (CartItem $item): array {
+        $normalized = collect($items)->map(function (CartItem $item): array {
             return [
                 'id' => $item->id,
                 'product_id' => $item->product_id,
@@ -113,11 +112,27 @@ class CartController extends Controller
             ];
         })->values();
 
+        $subtotal = (float) $normalized->sum('line_total');
+
         return [
-            'id' => $cart->id,
-            'items' => $items,
-            'subtotal' => (float) $items->sum('line_total'),
-            'currency' => $items->first()['currency'] ?? 'EUR',
+            'items' => $normalized,
+            'subtotal' => round($subtotal, 2),
+            'currency' => $normalized->first()['currency'] ?? 'EUR',
         ];
+    }
+
+    private function ownsItem(Request $request, CartItem $item): bool
+    {
+        $item->loadMissing('cart');
+        $cart = $item->cart;
+        if (! $cart) {
+            return false;
+        }
+
+        if ($request->user()) {
+            return (int) $cart->user_id === (int) $request->user()->getAuthIdentifier();
+        }
+
+        return $cart->user_id === null && $cart->session_id === $request->session()->getId();
     }
 }

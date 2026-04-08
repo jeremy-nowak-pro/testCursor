@@ -17,6 +17,7 @@ class CartRoutesTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->seed(CatalogSeeder::class);
     }
 
@@ -25,19 +26,21 @@ class CartRoutesTest extends TestCase
         $user = User::factory()->create();
         $product = Product::query()->firstOrFail();
 
-        $response = $this->actingAs($user)->post('/cart/items', [
+        $this->actingAs($user);
+
+        $first = $this->post('/cart/items', [
             'product_id' => $product->id,
             'quantity' => 1,
         ]);
-        $this->assertContainsMutationStatus($response->getStatusCode());
+        $this->assertMutationResponse($first->getStatusCode());
 
-        $response2 = $this->actingAs($user)->post('/cart/items', [
+        $second = $this->post('/cart/items', [
             'product_id' => $product->id,
             'quantity' => 2,
         ]);
-        $this->assertContainsMutationStatus($response2->getStatusCode());
+        $this->assertMutationResponse($second->getStatusCode());
 
-        $cart = Cart::query()->where('user_id', $user->id)->firstOrFail();
+        $cart = Cart::query()->where('user_id', $user->id)->whereNull('session_id')->firstOrFail();
 
         $this->assertDatabaseHas('cart_items', [
             'cart_id' => $cart->id,
@@ -48,44 +51,47 @@ class CartRoutesTest extends TestCase
         $this->assertSame(1, CartItem::query()->where('cart_id', $cart->id)->count());
     }
 
-    public function test_show_cart(): void
+    public function test_show_cart_returns_payload(): void
     {
         $user = User::factory()->create();
         $product = Product::query()->firstOrFail();
-        $cart = Cart::query()->create(['user_id' => $user->id]);
+
+        $cart = Cart::query()->create([
+            'user_id' => $user->id,
+            'session_id' => null,
+            'currency' => 'EUR',
+        ]);
+
         $item = CartItem::query()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 2,
             'unit_price' => $product->price,
             'currency' => $product->currency,
+            'quantity' => 2,
         ]);
 
         $this->actingAs($user)
-            ->get('/cart')
+            ->get('/cart/state')
             ->assertOk()
-            ->assertJsonPath('data.id', $cart->id)
             ->assertJsonPath('data.items.0.id', $item->id)
             ->assertJsonPath('data.currency', 'EUR');
     }
 
-    public function test_update_qty(): void
+    public function test_update_item_quantity(): void
     {
         $user = User::factory()->create();
         $product = Product::query()->firstOrFail();
-        $cart = Cart::query()->create(['user_id' => $user->id]);
+        $cart = Cart::query()->create(['user_id' => $user->id, 'session_id' => null, 'currency' => 'EUR']);
         $item = CartItem::query()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1,
             'unit_price' => $product->price,
             'currency' => $product->currency,
+            'quantity' => 1,
         ]);
 
-        $response = $this->actingAs($user)->patch("/cart/items/{$item->id}", [
-            'quantity' => 4,
-        ]);
-        $this->assertContainsMutationStatus($response->getStatusCode());
+        $response = $this->actingAs($user)->patch("/cart/items/{$item->id}", ['quantity' => 4]);
+        $this->assertMutationResponse($response->getStatusCode());
 
         $this->assertDatabaseHas('cart_items', [
             'id' => $item->id,
@@ -93,26 +99,26 @@ class CartRoutesTest extends TestCase
         ]);
     }
 
-    public function test_delete_item(): void
+    public function test_delete_item_from_cart(): void
     {
         $user = User::factory()->create();
         $product = Product::query()->firstOrFail();
-        $cart = Cart::query()->create(['user_id' => $user->id]);
+        $cart = Cart::query()->create(['user_id' => $user->id, 'session_id' => null, 'currency' => 'EUR']);
         $item = CartItem::query()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1,
             'unit_price' => $product->price,
             'currency' => $product->currency,
+            'quantity' => 1,
         ]);
 
         $response = $this->actingAs($user)->delete("/cart/items/{$item->id}");
-        $this->assertContainsMutationStatus($response->getStatusCode());
+        $this->assertMutationResponse($response->getStatusCode());
 
         $this->assertDatabaseMissing('cart_items', ['id' => $item->id]);
     }
 
-    public function test_validation_invalid_returns_422(): void
+    public function test_add_item_returns_422_when_payload_is_invalid(): void
     {
         $user = User::factory()->create();
 
@@ -124,34 +130,35 @@ class CartRoutesTest extends TestCase
             ->assertStatus(422);
     }
 
-    public function test_forbidden_cross_user_ownership(): void
+    public function test_user_cannot_update_or_delete_another_user_item(): void
     {
         $owner = User::factory()->create();
-        $other = User::factory()->create();
+        $otherUser = User::factory()->create();
         $product = Product::query()->firstOrFail();
-        $cart = Cart::query()->create(['user_id' => $owner->id]);
+
+        $cart = Cart::query()->create(['user_id' => $owner->id, 'session_id' => null, 'currency' => 'EUR']);
         $item = CartItem::query()->create([
             'cart_id' => $cart->id,
             'product_id' => $product->id,
-            'quantity' => 1,
             'unit_price' => $product->price,
             'currency' => $product->currency,
+            'quantity' => 1,
         ]);
 
-        $this->actingAs($other)
+        $this->actingAs($otherUser)
             ->patchJson("/cart/items/{$item->id}", ['quantity' => 2])
-            ->assertForbidden();
+            ->assertNotFound();
 
-        $this->actingAs($other)
+        $this->actingAs($otherUser)
             ->deleteJson("/cart/items/{$item->id}")
-            ->assertForbidden();
+            ->assertNotFound();
     }
 
-    private function assertContainsMutationStatus(int $statusCode): void
+    private function assertMutationResponse(int $statusCode): void
     {
         $this->assertTrue(
             in_array($statusCode, [200, 302], true),
-            "Expected status 200 or 302, got {$statusCode}."
+            "Expected mutation status 200 or 302, got {$statusCode}."
         );
     }
 }

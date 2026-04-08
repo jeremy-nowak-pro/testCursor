@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['user_id'])]
+#[Fillable(['user_id', 'session_id', 'currency', 'merged_at'])]
 class Cart extends Model
 {
     use HasFactory;
@@ -27,5 +27,15 @@ class Cart extends Model
     public function items(): HasMany
     {
         return $this->hasMany(CartItem::class);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'merged_at' => 'datetime',
+        ];
     }
 }

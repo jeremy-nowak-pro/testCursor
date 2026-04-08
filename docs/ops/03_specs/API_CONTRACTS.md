@@ -65,8 +65,46 @@ Les chemins ci-dessous decrivent le **contrat fonctionnel** (URL + donnees). En 
 - Response (200):
   - `data.items[]`, `data.subtotal`, `data.currency`
 - Errors:
-  - `404` product not found
+  - `422` invalid payload (`product_id` absent/inexistant, `quantity < 1`)
+
+## Cart - State (Guest/Auth)
+- Method: `GET`
+- Path: `/cart/state`
+- Behaviour:
+  - Guest: panier resolu via `session_id` (table `carts`, `user_id = null`)
+  - Auth: panier resolu via `user_id` (panier actif utilisateur)
+- Response (200):
+  - `data.items[]`: `id`, `product_id`, `quantity`, `unit_price`, `currency`
+  - `data.subtotal`, `data.currency`
+
+## Cart - Update Item
+- Method: `PATCH`
+- Path: `/cart/items/{item}`
+- Request:
+  - `quantity` (int, min 1)
+- Response (200):
+  - `data.items[]`, `data.subtotal`, `data.currency`
+- Errors:
+  - `404` item introuvable ou non possede (ownership strict)
   - `422` invalid quantity
+
+## Cart - Delete Item
+- Method: `DELETE`
+- Path: `/cart/items/{item}`
+- Response (200):
+  - `data.items[]`, `data.subtotal`, `data.currency`
+- Errors:
+  - `404` item introuvable ou non possede (ownership strict)
+
+## Cart - Merge on Login
+- Trigger: `POST /login` succes (event `Login`)
+- Merge rules:
+  - Si panier guest existe, fusion dans panier utilisateur actif
+  - Meme `product_id` => increment `quantity`
+  - `unit_price`/`currency` conserves de facon coherente:
+    - ligne existante utilisateur conserve ses valeurs
+    - nouvelle ligne issue guest conserve ses valeurs
+  - Nettoyage: suppression du panier guest apres fusion
 
 ## Cart - Show
 - Method: `GET`
@@ -77,14 +115,14 @@ Les chemins ci-dessous decrivent le **contrat fonctionnel** (URL + donnees). En 
   - `data.items[]`: `id`, `product_id`, `product{name,slug}`, `unit_price`, `currency`, `quantity`, `line_total`
   - `data.subtotal`, `data.currency`
 
-## Cart - Update Item
+## Cart - Update Item Quantity
 - Method: `PATCH`
 - Path: `/cart/items/{item}`
 - Auth: required
 - Request:
   - `quantity` (int, min 1)
 - Response:
-  - `302` redirect on success (web flow) or `200` payload (JSON flow)
+  - `302` redirect on success (web flow) or `200` with cart payload (JSON flow)
 - Errors:
   - `403` item ownership mismatch
   - `422` invalid quantity
@@ -94,7 +132,7 @@ Les chemins ci-dessous decrivent le **contrat fonctionnel** (URL + donnees). En 
 - Path: `/cart/items/{item}`
 - Auth: required
 - Response:
-  - `302` redirect on success (web flow) or `200` payload (JSON flow)
+  - `302` redirect on success (web flow) or `200` with cart payload (JSON flow)
 - Errors:
   - `403` item ownership mismatch
 

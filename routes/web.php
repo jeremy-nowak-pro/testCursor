@@ -14,6 +14,13 @@ Route::get('/categories/{slug}/products', [CatalogController::class, 'categoryLi
     ->name('catalog.category.listing');
 Route::get('/products/{slug}', [CatalogController::class, 'productShow'])
     ->name('catalog.product.show');
+Route::get('/cart', function () {
+    return Inertia::render('Cart/Index');
+})->name('cart.index');
+Route::get('/cart/state', [CartController::class, 'show'])->name('cart.show');
+Route::post('/cart/items', [CartController::class, 'addItem'])->name('cart.items.store');
+Route::patch('/cart/items/{item}', [CartController::class, 'updateItem'])->name('cart.items.update');
+Route::delete('/cart/items/{item}', [CartController::class, 'destroyItem'])->name('cart.items.destroy');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
