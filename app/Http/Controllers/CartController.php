@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 class CartController extends Controller
 {
-n response()->json(['data' => $this->cartPayload($cart)]);
     public function __construct(private readonly CartService $cartService) {}
 
     public function show(Request $request): JsonResponse
