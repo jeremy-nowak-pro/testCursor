@@ -13,6 +13,10 @@ class CatalogSeeder extends Seeder
      */
     public function run(): void
     {
+        Category::query()
+            ->whereNotIn('slug', ['tshirt', 'pantalon', 'veste'])
+            ->delete();
+
         $categories = [
             'tshirt' => Category::query()->updateOrCreate(
                 ['slug' => 'tshirt'],

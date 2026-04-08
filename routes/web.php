@@ -2,28 +2,11 @@
 
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Category;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Schema;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    $categories = [];
-
-    if (Schema::hasTable('categories')) {
-        $categories = Category::query()
-            ->orderBy('name')
-            ->get(['name', 'slug'])
-            ->map(fn (Category $category) => [
-                'name' => $category->name,
-                'slug' => $category->slug,
-            ])
-            ->values();
-    }
-
-    return Inertia::render('Welcome', [
-        'categories' => $categories,
-    ]);
+    return Inertia::render('Welcome');
 });
 
 Route::get('/categories/{slug}/products', [CatalogController::class, 'categoryListing'])

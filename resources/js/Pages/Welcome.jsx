@@ -2,9 +2,9 @@ import { Head } from '@inertiajs/react';
 import ShopLayout from '../Components/ShopLayout';
 
 const defaultCategories = [
-    { name: 'Affiches', slug: 'affiches' },
-    { name: 'Stickers', slug: 'stickers' },
-    { name: 'Textiles', slug: 'textiles' },
+    { name: 'T-Shirts', slug: 'tshirt' },
+    { name: 'Pantalons', slug: 'pantalon' },
+    { name: 'Vestes', slug: 'veste' },
 ];
 
 export default function Welcome({ categories = defaultCategories }) {
