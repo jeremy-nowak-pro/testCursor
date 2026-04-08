@@ -1,0 +1,17 @@
+# Default reviewers
+* @team-lead
+
+# Backend ownership
+/app/ @backend-lead
+/routes/ @backend-lead
+/database/ @backend-lead
+
+# Frontend ownership
+/resources/js/ @frontend-lead
+
+# Project governance docs
+/docs/ops/01_context/ @team-lead
+/docs/ops/03_specs/ @team-lead
+/docs/ops/04_tasks/ @team-lead
+/docs/ops/05_agents/ @team-lead
+/docs/ops/06_reviews/ @team-lead

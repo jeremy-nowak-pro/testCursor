@@ -1,0 +1,11 @@
+---
+description: Toujours se referer au contexte projet
+alwaysApply: true
+---
+
+# Project Context First
+
+- Lire `docs/ops/01_context/PROJECT_CONTEXT.md` avant toute proposition structurante.
+- Si une demande contredit ce contexte, signaler le conflit.
+- Proposer des actions alignees sur objectifs, contraintes et Definition of Done.
+- En cas d'ambiguite, poser une question de clarification.

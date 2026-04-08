@@ -1,0 +1,11 @@
+---
+description: Standards de code et de livraison
+alwaysApply: true
+---
+
+# Coding Standards
+
+- Produire du code lisible, teste, et documente de facon concise.
+- Preferer des changements atomiques et faciles a reviewer.
+- Ajouter ou mettre a jour des tests pour toute logique non triviale.
+- Eviter les regressions en verifiant lint, tests et demarrage local.
